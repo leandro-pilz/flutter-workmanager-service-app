@@ -2,6 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
+import 'package:workmanager_service_poc/core/api.dart';
+import 'package:workmanager_service_poc/core/repositories/product_repository.dart';
+import 'package:workmanager_service_poc/data/http/api_imp.dart';
+import 'package:workmanager_service_poc/data/http/configure_dio.dart';
+import 'package:workmanager_service_poc/data/repositories/product_repository_imp.dart';
+
+final Api api = ApiImp(dio: ConfigureDio().dio);
+
+final ProductRepository productRepository = ProductRepositoryImp(api: api);
 
 enum WorkmanagerServices {
   taskProductsUpdate(
@@ -54,19 +63,17 @@ void callBackDispatcher() {
         WorkmanagerServices.getService(value: taskName);
     switch (services) {
       case WorkmanagerServices.taskProductsUpdate:
-        await Future.delayed(const Duration(milliseconds: 13000));
         log('SERVIÇO DE ATUALIZAÇÃO DE PRODUTOS RODOU AS $date');
+        final result = await productRepository.getAll(userId: 2504199);
+        log('Produtos restornados pela api ${result.length}');
         break;
       case WorkmanagerServices.taskPricesUpdate:
-        await Future.delayed(const Duration(milliseconds: 10000));
         log('SERVIÇO DE ATUALIZAÇÃO DE PREÇOS RODOU AS $date');
         break;
       case WorkmanagerServices.taskStocksUpdate:
-        await Future.delayed(const Duration(milliseconds: 4000));
         log('SERVIÇO DE ATUALIZAÇÃO DE ESTOQUE RODOU AS $date');
         break;
       default:
-        await Future.delayed(const Duration(milliseconds: 3000));
         log('SERVIÇO DE ATUALIZAÇÃO DE CLIENTES RODOU AS $date');
         break;
     }
@@ -78,20 +85,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Workmanager().cancelAll();
   await Workmanager().initialize(callBackDispatcher);
-
-  for (var service in WorkmanagerServices.values) {
-    await Workmanager().registerPeriodicTask(
-      service.id,
-      service.service,
-      frequency: Duration(minutes: service.frequencyMinutes),
-      constraints: Constraints(
-        networkType: NetworkType.connected,
-        requiresStorageNotLow: true,
-        requiresDeviceIdle: false,
-      ),
-    );
-  }
-
   runApp(const MyApp());
 }
 
@@ -130,6 +123,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _init();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -156,5 +157,20 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void _init() async {
+    for (var service in WorkmanagerServices.values) {
+      await Workmanager().registerPeriodicTask(
+        service.id,
+        service.service,
+        frequency: Duration(minutes: service.frequencyMinutes),
+        constraints: Constraints(
+          networkType: NetworkType.connected,
+          requiresStorageNotLow: true,
+          requiresDeviceIdle: false,
+        ),
+      );
+    }
   }
 }

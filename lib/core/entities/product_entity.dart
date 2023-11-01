@@ -9,11 +9,14 @@ base class ProductEntity extends Entity {
   final String linkImage;
 
   ProductEntity({
+    super.id,
     required this.code,
     required this.description,
     required this.profitMargin,
     required this.packaging,
     required this.unitOfMeasurement,
     required this.linkImage,
+    super.created,
+    super.updated,
   });
 }

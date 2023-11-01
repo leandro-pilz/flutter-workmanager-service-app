@@ -2,15 +2,22 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
-import 'package:workmanager_service_poc/core/api.dart';
+import 'package:workmanager_service_poc/core/db/data_base_helper.dart';
+import 'package:workmanager_service_poc/core/entities/api.dart';
 import 'package:workmanager_service_poc/core/repositories/product_repository.dart';
+import 'package:workmanager_service_poc/data/db/data_base_helper_imp.dart';
 import 'package:workmanager_service_poc/data/http/api_imp.dart';
 import 'package:workmanager_service_poc/data/http/configure_dio.dart';
 import 'package:workmanager_service_poc/data/repositories/product_repository_imp.dart';
 
 final Api api = ApiImp(dio: ConfigureDio().dio);
 
-final ProductRepository productRepository = ProductRepositoryImp(api: api);
+final DataBaseHelper dataBase = DataBaseHelperImp();
+
+final ProductRepository productRepository = ProductRepositoryImp(
+  api: api,
+  dataBase: dataBase,
+);
 
 enum WorkmanagerServices {
   taskProductsUpdate(
@@ -38,10 +45,11 @@ enum WorkmanagerServices {
   final String service;
   final int frequencyMinutes;
 
-  const WorkmanagerServices(
-      {required this.id,
-      required this.service,
-      required this.frequencyMinutes});
+  const WorkmanagerServices({
+    required this.id,
+    required this.service,
+    required this.frequencyMinutes,
+  });
 
   static getService({required String value}) {
     for (var item in values) {
@@ -65,6 +73,7 @@ void callBackDispatcher() {
       case WorkmanagerServices.taskProductsUpdate:
         log('SERVIÇO DE ATUALIZAÇÃO DE PRODUTOS RODOU AS $date');
         final result = await productRepository.getAll(userId: 2504199);
+        await productRepository.saveAll(produtcs: result);
         log('Produtos restornados pela api ${result.length}');
         break;
       case WorkmanagerServices.taskPricesUpdate:

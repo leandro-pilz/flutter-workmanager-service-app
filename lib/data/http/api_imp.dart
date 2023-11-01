@@ -1,4 +1,4 @@
-import 'package:workmanager_service_poc/core/api.dart';
+import 'package:workmanager_service_poc/core/entities/api.dart';
 import 'package:dio/dio.dart';
 
 base class ApiImp<T> implements Api {

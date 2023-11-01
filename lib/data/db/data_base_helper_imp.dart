@@ -88,10 +88,6 @@ class DataBaseHelperImp implements DataBaseHelper {
         );
       }
 
-      if (!await isOpen()) {
-        _initDb();
-      }
-
       await _db.transaction((txn) async {
         final existsData = await _executeABy(
           transaction: txn,
@@ -136,8 +132,6 @@ class DataBaseHelperImp implements DataBaseHelper {
     } on DatabaseException catch (e) {
       _exceptions(exceptions: e);
     }
-
-    await close();
 
     return true;
   }

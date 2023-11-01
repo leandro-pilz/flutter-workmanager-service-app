@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:workmanager_service_poc/core/db/data_base_helper.dart';
-import 'package:workmanager_service_poc/core/entities/api.dart';
+import 'package:workmanager_service_poc/core/http/api.dart';
 import 'package:workmanager_service_poc/core/repositories/product_repository.dart';
 import 'package:workmanager_service_poc/data/db/data_base_helper_imp.dart';
 import 'package:workmanager_service_poc/data/http/api_imp.dart';

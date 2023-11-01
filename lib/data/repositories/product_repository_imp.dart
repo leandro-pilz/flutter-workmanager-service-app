@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:workmanager_service_poc/core/db/data_base_helper.dart';
-import 'package:workmanager_service_poc/core/entities/api.dart';
+import 'package:workmanager_service_poc/core/http/api.dart';
 import 'package:workmanager_service_poc/core/entities/product_entity.dart';
 import 'package:workmanager_service_poc/core/repositories/product_repository.dart';
 import 'package:workmanager_service_poc/data/adapters/product_adapter.dart';
